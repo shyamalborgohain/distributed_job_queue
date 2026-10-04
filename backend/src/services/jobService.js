@@ -18,4 +18,24 @@ const createJob = async (jobData) => {
     };
 };
 
-module.exports = {createJob};
+const getJobStatus = async (jobID) => {
+    const job = await jobQueue.getJob(jobID);
+
+    if (!job) {
+        return null;
+    }
+
+    const status = await job.getState();
+
+    return {
+        id: job.id,
+        status: status,
+        data: job.data,
+        result: job.returnvalue
+    };
+};
+
+module.exports = {
+    createJob,
+    getJobStatus
+};

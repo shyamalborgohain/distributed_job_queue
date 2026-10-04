@@ -1,6 +1,9 @@
 const express = require("express");
 
-const { createJob } = require("../controllers/jobController.js");
+const { 
+    createJob,
+    getJobStatus
+} = require("../controllers/jobController.js");
 
 const router = express.Router();
 
@@ -11,6 +14,10 @@ const router = express.Router();
 //     });
 // });
 
+// Create a new job
 router.post("/", createJob);
+
+// Get job status by ID
+router.get("/:id", getJobStatus);
 
 module.exports = router;
