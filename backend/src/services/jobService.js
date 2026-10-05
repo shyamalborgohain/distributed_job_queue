@@ -8,7 +8,13 @@ const { jobQueue } = require("../queues/jobQueue.js");
 // };
 
 const createJob = async (jobData) => {
-    const job = await jobQueue.add("process-job", jobData);
+    const job = await jobQueue.add("process-job", jobData, {
+        attempts: 3,
+        backoff: {
+            type: "exponential",
+            delay: 2000
+        }
+    });
 
     return {
         id: job.id,
@@ -31,7 +37,9 @@ const getJobStatus = async (jobID) => {
         id: job.id,
         status: status,
         data: job.data,
-        result: job.returnvalue
+        result: job.returnvalue,
+        attemptsMade: job.attemptsMade,
+        failedReason: status === "failed" ? job.failedReason: null
     };
 };
 

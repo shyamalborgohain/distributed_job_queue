@@ -4,9 +4,19 @@ const worker = new Worker(
     "job-queue",
     async(job) => {
         console.log(`Processing job ${job.id}`);
-        console.log("Job data:", job.data);
+        // console.log("Job data:", job.data);
+        console.log(`Attempts: ${job.attemptsMade + 1}`);
+
+        if (job.data.payload.simulateFailure && job.attemptsMade < 2) {
+            console.log("Simulating job failure...");
+            throw new Error("Temporary processing failure");
+        }
 
         console.log(`Sending email to ${job.data.payload.to}`);      // simulate processing an email job
+
+        // await new Promise(resolve => setTimeout(resolve, 5000));
+
+        console.log(`Finished job ${job.id}`);
 
         return {
             success: true,
@@ -17,7 +27,8 @@ const worker = new Worker(
         connection: {
             host: "127.0.0.1",
             port: 6379
-        }
+        },
+        concurrency: 3
     }
 );
 
